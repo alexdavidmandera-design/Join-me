@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* { box-sizing: border-box; }
+body{
+  background:#0f0f0f; font-family:Arial; 
+  margin:0; padding:0;
+  color:white; 
+  display:block;
+  width:100%; min-height:100vh;
+}
+.card{
+  background:#1a1a1a; 
+  width:100%; 
+  min-height:100vh;
+  max-width:100%;
+  border-radius:0;
+  padding:20px; text-align:center;
+}
+.welcome-box{background:#00ff88; color:black; padding:12px; border-radius:10px; font-weight:bold; min-height:45px; display:flex; align-items:center; justify-content:center;}
+.profile{width:120px; height:120px; border-radius:50%; border:3px solid #00ff88; object-fit:cover; margin-top:15px;}
+.chess-box{background:#222; border-radius:15px; padding:15px; text-align:left; margin-top:15px;}
+.chess-box img{width:100%; border-radius:10px; height:160px; object-fit:cover;}
+.price{font-size:26px; font-weight:bold; color:#00ff88; margin-top:10px;}
+.join-btn{width:100%; background:#00ff88; color:black; padding:16px; border-radius:12px; border:none; font-weight:bold; font-size:16px; margin-top:15px; min-height:55px;}
+#joinForm{display:none; background:#222; margin-top:15px; padding:15px; border-radius:15px; text-align:left; border:1px solid #333;}
+input, select{width:100%; padding:12px; border-radius:10px; border:1px solid #333; background:#111; color:white; margin-top:8px; box-sizing:border-box;}
+.option{background:#111; padding:12px; border-radius:10px; margin-top:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid #333; font-size:14px; cursor:pointer;}
+.circle{width:20px; height:20px; border-radius:50%; border:2px solid #888; display:inline-block; flex-shrink:0;}
+.circle.active{background:#00aaff; border-color:#00aaff; box-shadow:0 0 10px #00aaff;}
+.agree-box{display:flex; gap:10px; align-items:center; background:#111; padding:12px; border-radius:10px; margin-top:12px; cursor:pointer;}
+.cursor{border-right:2px solid currentColor; animation:blink 0.7s infinite;}
+@keyframes blink{50%{border-color:transparent}}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="welcome-box">
+    <span id="welcomeText"></span><span class="cursor"></span>
+  </div>
+
+  <img class="profile" src="photo.jpg">
+  <h2>Alex David</h2>
+  <p style="color:#aaa; font-size:13px;">Programming Tutor & Chess Coach</p>
+  <p>Not new to this street. I teach ALL programming languages except Gaming.</p>
+  <div class="price">30,000 KES</div>
+
+  <div class="chess-box">
+    <img src="chess.jpg">
+    <h3>♟️ About Chess</h3>
+    <p style="color:#ccc; font-size:14px;">I teach Chess, and am a good chess player. We can start at anytime, just join me and let's move on.</p>
+  </div>
+
+  <button class="join-btn" onclick="openJoin()">
+    <span id="typeText"></span><span class="cursor"></span>
+  </button>
+
+  <div id="joinForm">
+    <h3 style="text-align:center; margin-top:0;">Join Form</h3>
+    <label>Name</label>
+    <input id="name" placeholder="Your full name">
+    <label style="margin-top:10px; display:block;">Phone Number</label>
+    <input id="phone" placeholder="07...">
+    <label style="margin-top:10px; display:block;">Laptop?</label>
+    <select id="laptop">
+      <option>Yes, I have laptop</option>
+      <option>No, phone only</option>
+      <option>Planning to get</option>
+    </select>
+
+    <h4>Choose Amount to Pay</h4>
+    <div class="option" onclick="selectPay(30000, this)"><span>Basic (All Languages) - 30,000 KES</span><span class="circle"></span></div>
+    <div class="option" onclick="selectPay(50000, this)"><span>Advance More: Web Building, Python - 50,000 KES</span><span class="circle"></span></div>
+    <div class="option" onclick="selectPay(80000, this)"><span>Full Combo - 80,000 KES</span><span class="circle"></span></div>
+
+    <div style="margin-top:12px; background:#000; padding:10px; border-radius:8px; text-align:center; border:1px dashed #00ff88;">
+      To Pay: <b id="amount" style="color:#00ff88; font-size:20px;">30,000 KES</b>
+    </div>
+
+    <div class="agree-box" onclick="toggleAgree()">
+      <span id="agreeCircle" class="circle"></span>
+      <span style="font-size:13px;">I agree the payment above (tap dot turns blue)</span>
+    </div>
+
+    <button class="join-btn" style="background:white;" onclick="submitForm()">Submit & Go to WhatsApp</button>
+  </div>
+
+  <div style="color:#666; font-size:12px; margin-top:10px;">0768979636</div>
+</div>
+
+<script>
+function makeTyper(elementId, text, typeSpeed, deleteSpeed, pause){
+  let i=0; let deleting=false;
+  function loop(){
+    let el=document.getElementById(elementId);
+    if(!deleting){
+      el.textContent=text.substring(0,i+1); i++;
+      if(i===text.length){ setTimeout(()=>{deleting=true; loop();}, pause); return; }
+    } else {
+      el.textContent=text.substring(0,i-1); i--;
+      if(i===0){ deleting=false; }
+    }
+    setTimeout(loop, deleting ? deleteSpeed : typeSpeed);
+  }
+  loop();
+}
+makeTyper("welcomeText", "Welcome this is Alex David, wanna join and be taught coding, come with me", 70, 30, 2000);
+makeTyper("typeText", "press here to join the programming world", 80, 40, 1500);
+
+function openJoin(){ document.getElementById('joinForm').style.display='block'; }
+
+let selectedAmount=30000; let agreed=false;
+
+function selectPay(amount, el){
+  let circle = el.querySelector('.circle');
+  // If already blue, tap again = OFF
+  if(circle.classList.contains('active')){
+    circle.classList.remove('active');
+    document.getElementById('amount').innerText = "0 KES - Select one";
+    selectedAmount = 0;
+    return;
+  }
+  selectedAmount=amount;
+  document.getElementById('amount').innerText=amount.toLocaleString()+" KES";
+  document.querySelectorAll('.option .circle').forEach(c=>c.classList.remove('active'));
+  circle.classList.add('active');
+}
+
+function toggleAgree(){ agreed=!agreed; document.getElementById('agreeCircle').classList.toggle('active', agreed); }
+
+function submitForm(){
+  let n=document.getElementById('name').value;
+  let p=document.getElementById('phone').value;
+  let l=document.getElementById('laptop').value;
+  if(!n || !p){ alert("Fill name & phone"); return; }
+  if(!agreed){ alert("Tap the circle to agree - it will turn blue"); return; }
+  if(selectedAmount===0){ alert("Select amount to pay"); return; }
+  
+  let text = `Hello Alex David
+Name: ${n}
+Phone: ${p}
+Laptop: ${l}
+Amount: ${selectedAmount} KES
+I agree to pay.`;
+  let encoded = encodeURIComponent(text);
+  let url = `https://wa.me/254768979636?text=${encoded}`;
+  window.open(url, '_blank');
+
+  // Auto switch OFF after send
+  setTimeout(()=>{
+    document.querySelectorAll('.circle').forEach(c=>c.classList.remove('active'));
+    document.getElementById('amount').innerText = "0 KES - Select one";
+    document.getElementById('name').value = "";
+    document.getElementById('phone').value = "";
+    selectedAmount = 0;
+    agreed = false;
+  }, 1000);
+}
+</script>
+
+</body>
+</html>
